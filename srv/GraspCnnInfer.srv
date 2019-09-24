@@ -1,0 +1,17 @@
+VisualInfo rgbd_info
+HandConfig init_hand_pcd_true_config
+HandConfig init_hand_pcd_goal_config
+HandConfig close_hand_pcd_config
+string rgb_image_path
+string depth_image_path
+string object_name
+int64 object_id
+int64 grasp_id
+int32 grasp_success_label
+bool is_top_grasp
+---
+HandConfig inf_hand_pcd_config
+float32 inf_suc_prob
+float32 init_suc_prob
+bool success
+

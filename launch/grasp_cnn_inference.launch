@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="real_kinect2" value="false"/>
+    <arg name="hd" value="true"/>
+    <arg name="real_data_path" value="/dataspace/data_kai/multi_finger_exp_data/"/>
+    <arg name="sim_data_path" value="/mnt/tars_data/multi_finger_sim_data/"/>
+
+
+    <node name="grasps_cnn_inf_server_node" pkg="prob_grasp_planner" 
+    type="grasp_cnn_inf_server.py" output="screen">
+      <param name="data_recording_path" value="$(arg real_data_path)" type="string" 
+        if="$(arg real_kinect2)"/>
+      <param name="data_recording_path" value="$(arg sim_data_path)" type="string" 
+        unless="$(arg real_kinect2)"/>
+      <param name="real_kinect2" value="$(arg real_kinect2)" type="bool"/>
+      <param name="use_hd" value="$(arg hd)" type="bool"/>
+    </node>
+
+    <!--dummy blensor frame-->
+    <node pkg="tf" type="static_transform_publisher" name="dummy_blensor" 
+        args="0 0 0 0 0 3.1415926535 kinect2_rgb_optical_frame blensor_camera 100" />
+
+</launch>

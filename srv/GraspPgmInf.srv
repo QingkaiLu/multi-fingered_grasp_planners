@@ -1,0 +1,18 @@
+sensor_msgs/PointCloud2 scene_cloud
+prob_grasp_planner/HandConfig init_hand_object_config
+#Use constant array as initialization for BFGS 
+float64[] init_config_array
+string object_name
+int64 object_id
+int64 grasp_id
+bool is_top_grasp
+string object_frame_id
+#Grasp type for inference.
+#Can be: all, prec, power
+string grasp_type
+---
+prob_grasp_planner/HandConfig inf_hand_object_config
+float32 inf_suc_prob
+float32 init_suc_prob
+bool success
+

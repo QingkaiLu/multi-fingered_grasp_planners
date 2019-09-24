@@ -1,0 +1,12 @@
+<launch>
+    <!-- <arg name="save_rgbd_patches_path" value="/mnt/data_sal/data_kai/multi_finger_grasp_data/"/> -->
+    <!--arg name="use_hd_arg" value="true"/-->
+
+    <node name="gen_inf_voxel_node" pkg="prob_grasp_planner" type="gen_inference_voxel" output="screen"/> 
+
+    <node name="grasp_pgm_inf_server_node" pkg="prob_grasp_planner" type="grasp_pgm_inf_server.py" output="screen">
+      <!--param name="rgbd_patches_save_path" value="$(arg save_rgbd_patches_path)" type="string"/>
+      <param name="use_hd" value="$(arg use_hd_arg)" type="bool"/-->
+    </node>
+
+</launch>

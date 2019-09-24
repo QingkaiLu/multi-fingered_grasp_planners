@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="kinect2_real" value="false" />
+    <node name="gen_voxel_node" pkg="prob_grasp_planner" type="gen_voxel_from_pcd" output="screen"> 
+        <param name="camera_frame_id" value="kinect2_rgb_optical_frame" 
+            type="string" if="$(arg kinect2_real)"/>
+        <param name="camera_frame_id" value="kinect_pointcloud" 
+            type="string" unless="$(arg kinect2_real)"/>
+        <!--param name="use_seg_obj_cloud" value="true" type="bool"/-->
+    </node>
+    <node name="broadcast_tf_node" pkg="prob_grasp_planner" type="broadcast_tf.py" output="screen"/> 
+    <!--node name="broadcast_blensor_tf_node" pkg="grasp_pipeline" 
+        type="broadcast_blensor_camera_tf.py" output="screen"/--> 
+    <!--include file="$(find robot_aruco_calibration)/launch/publish_calibration_tf.launch"/-->
+    <node name="broadcast_gazebo_kinect_tf_node" pkg="grasp_pipeline" 
+        type="broadcast_gazebo_kinect_tf.py" output="screen"/>
+    <!--<node name="proc_grasp_data_node" pkg="prob_grasp_planner" type="proc_grasp_data.py" output="screen"/>--> 
+    <include file="$(find point_cloud_segmentation)/launch/table_obj_segmenter.launch"/>
+</launch>

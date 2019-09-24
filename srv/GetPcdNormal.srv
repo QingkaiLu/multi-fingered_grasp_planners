@@ -1,0 +1,4 @@
+string pcd_file_path
+---
+sensor_msgs/PointCloud2 pcd_normal
+sensor_msgs/PointCloud2 point_cloud

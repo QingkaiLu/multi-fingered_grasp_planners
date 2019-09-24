@@ -1,0 +1,3 @@
+sensor_msgs/JointState hand_joint_state
+geometry_msgs/PoseStamped palm_pose
+

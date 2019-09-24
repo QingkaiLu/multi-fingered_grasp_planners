@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="visualize_preshape" value="true"/>
+    <!--arg name="vh_parent_tf" value="world"/-->
+    <!--arg name="vh_parent_tf" value="grasp_object"/-->
+    <arg name="vh_parent_tf" value="object_pose"/>
+    <arg name="kinect2_real" value="false" />
+
+    <include file="$(find ll4ma_robots_description)/launch/load_virtual_allegro.launch"
+                                                        if="$(arg visualize_preshape)">
+      <arg name="biotac" value="false"/>
+      <arg name="parent_tf" value="$(arg vh_parent_tf)"/>
+    </include>
+
+    <node name="gen_voxel_node" pkg="prob_grasp_planner" 
+                        type="gen_voxel_from_pcd" output="screen"> 
+        <param name="camera_frame_id" value="kinect2_rgb_optical_frame" 
+            type="string" if="$(arg kinect2_real)"/>
+        <param name="camera_frame_id" value="kinect_pointcloud" 
+            type="string" unless="$(arg kinect2_real)"/>
+        <!--param name="use_seg_obj_cloud" value="true" type="bool"/-->
+    </node>
+
+    <node name="broadcast_tf_node" pkg="prob_grasp_planner" 
+                    type="broadcast_tf.py" output="screen"/> 
+
+    <node name="grasp_voxel_inf_server_node" pkg="prob_grasp_planner" 
+        type="grasp_voxel_inf_server.py" output="screen">
+        <param name="vis_preshape" value="$(arg visualize_preshape)" 
+                        type="bool"/>
+        <param name="virtual_hand_parent_tf" value="$(arg vh_parent_tf)"
+                        type="string"/>
+    </node>
+
+</launch>

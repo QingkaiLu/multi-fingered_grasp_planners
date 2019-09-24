@@ -1,0 +1,7 @@
+string pcd_file_path
+int32[] voxel_dim
+int32[] voxel_trans_dim
+float32[] voxel_size
+sensor_msgs/PointCloud2 seg_obj_cloud
+---
+int32[] voxel_grid

@@ -1,0 +1,13 @@
+sensor_msgs/JointState[] sample_hand_joint_state_list
+geometry_msgs/PoseStamped[] sample_palm_pose_list
+bool[] sample_is_top_grasp_list
+VisualInfo rgbd_info
+string rgb_image_path
+string depth_image_path
+string object_name
+int64 object_id
+int64 grasp_id
+---
+int32 max_suc_prob_sample_idx
+int32 max_suc_prob
+bool success

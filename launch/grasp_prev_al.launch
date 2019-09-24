@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="visualize_preshape" value="true"/>
+    <!--arg name="vh_parent_tf" value="blensor_camera"/-->
+    <!--arg name="vh_parent_tf" value="world"/-->
+    <arg name="vh_parent_tf" value="grasp_object"/>
+
+    <include file="$(find ll4ma_robots_description)/launch/load_virtual_allegro.launch" if="$(arg visualize_preshape)">
+      <arg name="biotac" value="false"/>
+      <arg name="parent_tf" value="$(arg vh_parent_tf)"/>
+    </include>
+
+    <node name="gen_inf_voxel_node" pkg="prob_grasp_planner" type="gen_inference_voxel" output="screen"/> 
+
+    <node name="grasp_al_server_node" pkg="prob_grasp_planner" type="grasp_al_server.py" output="screen">
+      <param name="vis_preshape" value="$(arg visualize_preshape)" type="bool"/>
+      <param name="virtual_hand_parent_tf" value="$(arg vh_parent_tf)" type="string"/>
+    </node>
+
+    <!--dummy blensor frame-->
+    <node pkg="tf" type="static_transform_publisher" name="dummy_blensor" 
+        args="0 0 0 0 0 3.1415926535 kinect2_rgb_optical_frame blensor_camera 100" />
+
+</launch>

@@ -1,0 +1,4 @@
+sensor_msgs/Image rgb
+sensor_msgs/Image depth
+sensor_msgs/PointCloud2 scene_sd_cloud_normal
+sensor_msgs/PointCloud2 scene_cloud_normal

@@ -1,0 +1,4 @@
+geometry_msgs/PoseStamped[] palm_poses_in_obj
+string tf_prefix
+---
+bool success

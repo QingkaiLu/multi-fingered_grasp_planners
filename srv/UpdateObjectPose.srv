@@ -1,0 +1,3 @@
+geometry_msgs/PoseStamped object_pose_world
+---
+bool success

@@ -1,0 +1,6 @@
+sensor_msgs/PointCloud2 scene_cloud
+int32[] voxel_dim
+float32[] voxel_size
+string object_frame_id
+---
+int32[] voxel_grid
