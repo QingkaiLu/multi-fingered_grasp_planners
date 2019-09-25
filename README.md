@@ -1,2 +1,2 @@
 # multi-fingered_grasp_planner
-Learning-based multi-fingered grasp planners. 
+Three different learning-based multi-fingered grasp planners. 
