@@ -7,6 +7,9 @@ We then formulated grasp planning as inferring the grasp configuration which max
 ## Requirement 
 ROS Kinetic, Python 2.7, Tensorflow 1.13.1, scikit-learn 0.20.3, PCL 1.7.2, OpenCV. 
 
+## Build
+```catkin build prob_grasp_planner```
+
 
 ## Launch Grasp Planners
 
