@@ -1,6 +1,3 @@
-# multi-fingered_grasp_planner
-This repo has the implementation of three different learning-based multi-fingered grasp planners. 
-
 # Probablistic Multi-fingered Grasp Planner
 
 This repo has several learning-based multi-fingered grasp planners implemented. 
@@ -28,7 +25,7 @@ Command to launch the voxel-based grasp planner of citation [3]:
 ## Grasp Planner Project Pages
 [Planning Multi-Fingered Grasps as Probabilistic Inference in a Learned Deep Network](https://robot-learning.cs.utah.edu/project/grasp_inference)
 
-[https://robot-learning.cs.utah.edu/project/grasp_type](https://robot-learning.cs.utah.edu/project/grasp_type)
+[Modeling Grasp Type Improves Learning-Based Grasp Planning](https://robot-learning.cs.utah.edu/project/grasp_type)
 
 ## Citations 
 
@@ -54,4 +51,5 @@ We list the bibtex citations of this repo.
 	journal={{IEEE} Robotics \& Automation Magazine (Under Review)},
 	year={2019}
     }
+
 
