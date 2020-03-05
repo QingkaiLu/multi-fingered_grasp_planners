@@ -51,7 +51,7 @@ We list the bibtex citations of this repo.
     [3] @article{lu2019multifinger,
 	title={{Multi-Fingered Grasp Planning via Inference in Deep Neural Networks}},
 	author={Lu, Qingkai, and Van der Merwe, Mark,  and Sundaralingam, Balakumar and Hermans, Tucker},
-	journal={{IEEE} Robotics \& Automation Magazine (Under Review)},
+	journal={{IEEE} Robotics \& Automation Magazine},
 	year={2019}
     }
 
