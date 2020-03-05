@@ -7,14 +7,10 @@ from grasp_rgbd_config_net import GraspRgbdConfigNet
 import matplotlib.pyplot as plt
 from gen_rgbd_images import GenRgbdImage
 import roslib.packages as rp
-import sys
-sys.path.append(rp.get_pkg_dir('grasp_pipeline') 
-        + '/src')
 from compute_finger_tip_location import ComputeFingerTipPose
 from prob_grasp_planner.msg import VisualInfo, HandConfig
 from geometry_msgs.msg import Pose, Quaternion, PoseStamped
 import tf
-
 from scipy.optimize import fmin_bfgs
 from scipy.optimize import fmin_l_bfgs_b
 from scipy.optimize import minimize

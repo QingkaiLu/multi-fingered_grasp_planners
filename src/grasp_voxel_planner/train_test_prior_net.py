@@ -10,8 +10,10 @@ from sklearn.metrics import precision_recall_fscore_support
 
 def train_prior_net(train_data_path, logs_path, prior_model_path, 
                     voxel_ae_model_path, pretrain_voxel_enc,
-                    update_voxel_enc, dropout):
-    prior_net = GraspPriorNetwork(update_voxel_enc, dropout)
+                    update_voxel_enc, dropout=False, 
+                    scope_name='prior_net'):
+    prior_net = GraspPriorNetwork(update_voxel_enc, dropout, 
+                                    scope_name=scope_name)
     is_train = True
     prior_net.prior_net_train_test(train_mode=is_train)
 
@@ -66,8 +68,8 @@ def train_prior_net(train_data_path, logs_path, prior_model_path,
                         # prior_net.holder_labels: grasp_labels,
                         prior_net.learning_rate: learning_rate,
                         }
-            if dropout:
-                feed_dict[prior_net.keep_prob] = 0.9
+            # if dropout:
+            #     feed_dict[prior_net.keep_prob] = 0.9
 
             [loss, _, train_summary] = sess.run([prior_net.prior_net_res['loss'],
                                                  prior_net.prior_net_res['opt_loss'],
@@ -80,9 +82,6 @@ def train_prior_net(train_data_path, logs_path, prior_model_path,
                 print 'iter_num:', iter_num
                 print 'learning_rate:', learning_rate
                 print 'loss:', loss
-                # prfc = precision_recall_fscore_support(grasp_labels, batch_suc_prob)
-                # print 'precision, recall, fscore, support:'
-                # print prfc
 
             iter_num += 1
  
@@ -93,13 +92,24 @@ def train_prior_net(train_data_path, logs_path, prior_model_path,
 
 
 def test_prior_net(test_data_path, prior_model_path, 
-                    update_voxel_enc, dropout):
-    prior_net = GraspPriorNetwork(update_voxel_enc, dropout)
+                    update_voxel_enc, dropout=False, 
+                    scope_name='prior_net',
+                    voxel_ae_model_path=None):
+    prior_net = GraspPriorNetwork(update_voxel_enc, dropout, 
+                                    scope_name=scope_name)
     is_train = False
     prior_net.prior_net_train_test(train_mode=is_train)
 
     init = tf.global_variables_initializer()
-    saver = tf.train.Saver()
+    # ae_saver = tf.train.Saver(tf.get_collection(
+    #                             tf.GraphKeys.GLOBAL_VARIABLES, 'voxel_ae'))
+    if voxel_ae_model_path is not None:
+        ae_saver = tf.train.Saver(prior_net.voxel_ae_vars)
+        saver = tf.train.Saver(var_list=tf.get_collection(
+                                    tf.GraphKeys.GLOBAL_VARIABLES, 
+                                    scope_name))
+    else:
+        saver = tf.train.Saver()
     tf.get_default_graph().finalize()
 
     batch_size = 1 #64
@@ -112,6 +122,10 @@ def test_prior_net(test_data_path, prior_model_path,
 
     # Launch the graph
     with tf.Session() as sess:
+        if voxel_ae_model_path is not None:
+            sess.run(init)
+            ae_saver.restore(sess, voxel_ae_model_path)
+
         saver.restore(sess, prior_model_path)
         # Training cycle
         while grasp_loader.epochs_completed < testing_epochs:
@@ -169,14 +183,21 @@ if __name__ == '__main__':
         #                 'multi_finger_sim_data_6_14/proc_grasp_data.h5'
         # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
         #                 'merged_grasp_data_6_6_and_6_8.h5'
-        # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
-        #     'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
+        # logs_path = '/home/qingkai/tf_logs/prior_net_logs'
+        # logs_path = '/home/qingkai/tf_logs/suc_prior_net_logs'
+        # logs_path = '/home/qingkai/tf_logs/prior_net_logs_2_sets'
+
         # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
         #     'merged_grasp_data_10_sets.h5'
+        # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+        #     'merged_suc_grasp_10_sets.h5'
+
+        # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+        #     'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
         train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
-            'merged_suc_grasp_10_sets.h5'
-        # logs_path = '/home/qingkai/tf_logs/prior_net_logs'
-        logs_path = '/home/qingkai/tf_logs/suc_prior_net_logs'
+                        'merged_suc_grasp_5_sets.h5'
+        logs_path = '/home/qingkai/tf_logs/prior_net_logs_suc_5_sets'
+
         if update_voxel_enc:
             if pretrain_voxel_enc:
                 prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_update_enc_pre.ckpt'
@@ -184,25 +205,37 @@ if __name__ == '__main__':
                 prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_update_enc_scratch.ckpt'
         else:
             # prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_freeze_enc_10_sets.ckpt'
-            prior_model_path = pkg_path + '/models/grasp_al_prior/suc_prior_net_freeze_enc_10_sets.ckpt'
+            # prior_model_path = pkg_path + '/models/grasp_al_prior/suc_prior_net_freeze_enc_10_sets.ckpt'
+            # prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_freeze_enc_2_sets.ckpt'
+            # prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_failure_10_sets_dropout_50.ckpt'
+            prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_suc_5_sets.ckpt'
 
         voxel_ae_model_path = pkg_path + '/models/voxel_ae/'
 
+        # scope_name = 'prior_net'
+        scope_name = 'suc_prior_net'
         train_prior_net(train_data_path, logs_path, prior_model_path, 
                         voxel_ae_model_path, pretrain_voxel_enc, 
-                        update_voxel_enc, dropout)
+                        update_voxel_enc, dropout, scope_name)
     else:
-        # test_data_path = '/mnt/tars_data/gazebo_al_grasps/test/' + \
-        #                 'merged_grasp_data_6_16_and_6_18.h5'
         # test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
         #     'merged_suc_grasp_10_sets.h5'
 
-        # test_data_path = '/mnt/tars_data/gazebo_al_grasps/test/' + \
-        #                 'merged_grasp_data_6_16_and_6_18.h5'
-        test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
-            'merged_grasp_data_10_sets.h5'
+        # test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+        #     'merged_grasp_data_10_sets.h5'
         # test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
         #     'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
+
+        # test_data_path = '/mnt/tars_data/gazebo_al_grasps/test/' + \
+        #                 'merged_grasp_data_6_16_and_6_18.h5'
+        test_data_path = '/mnt/tars_data/gazebo_al_grasps/test/' + \
+                        'merged_suc_grasp_6_16_and_6_18.h5'
+
+        # test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+        #     'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
+        # test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+        #                 'merged_suc_grasp_5_sets.h5'
+
         if update_voxel_enc:
             if pretrain_voxel_enc:
                 prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_update_enc_pre.ckpt'
@@ -210,8 +243,19 @@ if __name__ == '__main__':
                 prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_update_enc_scratch.ckpt'
         else:
             # prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_freeze_enc_10_sets.ckpt'
-            prior_model_path = pkg_path + '/models/grasp_al_prior/suc_prior_net_freeze_enc_10_sets.ckpt'
+            # prior_model_path = pkg_path + '/models/grasp_al_prior/suc_prior_net_freeze_enc_10_sets.ckpt'
+            # prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_freeze_enc_2_sets.ckpt'
+            prior_model_path = pkg_path + '/models/grasp_al_prior/prior_net_suc_5_sets.ckpt'
+            # prior_model_path = '/mnt/tars_data/multi_finger_sim_data_2_21/active_models/' + \
+            #         'batch_31_models/batch_31_retrain_suc_mdn'
+            # prior_model_path = '/home/qingkai/Workspace/models/grasp_al_prior/' + \
+            #                     'prior_net_freeze_enc_10_sets.ckpt'
 
+        # scope_name = 'prior_net'
+        scope_name = 'suc_prior_net'
+        # voxel_ae_model_path = pkg_path + '/models/voxel_ae/'
+        voxel_ae_model_path = None
         test_prior_net(test_data_path, prior_model_path, 
-                        update_voxel_enc, dropout)
+                        update_voxel_enc, dropout, scope_name,
+                        voxel_ae_model_path)
 

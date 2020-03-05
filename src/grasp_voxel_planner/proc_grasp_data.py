@@ -179,7 +179,8 @@ def proc_grasp_data(raw_data_path, proc_data_path):
 
 
 def merge_grasp_datasets(datasets_path, data_folders, 
-                        merged_file_name, only_success=False):
+                        merged_file_name, only_success=False,
+                        only_failure=False):
     merged_file_path = datasets_path + merged_file_name 
     merged_data_file = h5py.File(merged_file_path, 'w')
     grasps_number_key = 'grasps_number'
@@ -200,6 +201,10 @@ def merge_grasp_datasets(datasets_path, data_folders,
             if only_success:
                 print proc_grasp_file[local_label_key][()]
                 if proc_grasp_file[local_label_key][()] == 0:
+                    continue
+            if only_failure:
+                print proc_grasp_file[local_label_key][()]
+                if proc_grasp_file[local_label_key][()] == 1:
                     continue
             merged_data_file.create_dataset(global_label_key, 
                                     data=proc_grasp_file[local_label_key][()])
@@ -234,14 +239,44 @@ def merge_grasp_datasets(datasets_path, data_folders,
     merged_data_file.close()
 
 
+def count_grasps(datasets_path, merged_file_name):
+    merged_file_path = datasets_path + merged_file_name 
+    merged_data_file = h5py.File(merged_file_path, 'r')
+    top_grasps_num = 0
+    top_suc_grasps_num = 0
+    side_grasps_num = 0
+    side_suc_grasps_num = 0
+    
+    total_grasps_num = merged_data_file['grasps_number'][()] 
+
+    for i in xrange(total_grasps_num):
+        global_label_key = 'grasp_' + str(i) + '_label'
+        suc_label = merged_data_file[global_label_key][()]
+        global_top_key = 'grasp_' + str(i) + '_top_grasp'
+        top_label = merged_data_file[global_top_key][()]
+        if top_label == 1:
+            top_grasps_num += 1
+            if suc_label == 1:
+                top_suc_grasps_num += 1
+        else:
+            side_grasps_num += 1
+            if suc_label == 1:
+                side_suc_grasps_num += 1
+
+    print top_grasps_num, top_suc_grasps_num
+    print side_grasps_num, side_suc_grasps_num
+
+    merged_data_file.close()
+
+
 if __name__ == '__main__':
     # datasets_path = '/mnt/tars_data/gazebo_al_grasps/train/'
     datasets_path = '/mnt/tars_data/gazebo_al_grasps/test/'
     data_folders = os.listdir(datasets_path)
-    for data_folder in data_folders:
-        data_path = datasets_path + data_folder + '/'
-        print data_path
-        # proc_grasp_data(data_path)
+    # for data_folder in data_folders:
+    #     data_path = datasets_path + data_folder + '/'
+    #     print data_path
+    #     # proc_grasp_data(data_path)
 
     # data_path = '/mnt/tars_data/gazebo_train_grasps/multi_finger_sim_data_6_6/'
     # data_path = '/mnt/tars_data/gazebo_al_grasps/multi_finger_sim_data_6_26/'
@@ -267,10 +302,40 @@ if __name__ == '__main__':
     
     # merged_file_name = 'merged_grasp_data_10_sets.h5'
     # merge_grasp_datasets(datasets_path, data_folders, merged_file_name)
+    
+    # data_folders = ['multi_finger_sim_data_6_6', 'multi_finger_sim_data_6_8',
+    #                 'multi_finger_sim_data_6_10', 'multi_finger_sim_data_6_11',
+    #                 'multi_finger_sim_data_6_13']
+    # merged_suc_file_name = 'merged_suc_grasp_5_sets.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_suc_file_name, only_success=True)
+    # merged_failure_file_name = 'merged_failure_grasp_5_sets.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_failure_file_name, only_failure=True)
 
-    # merged_file_name = 'merged_suc_grasp_10_sets.h5'
-    # merged_file_name = 'merged_suc_grasp_6_14_and_6_16.h5'
-    # merge_grasp_datasets(datasets_path, data_folders, merged_file_name, only_success=True)
+    # data_folders = ['multi_finger_sim_data_6_6', 'multi_finger_sim_data_6_8']
+    # merged_suc_file_name = 'merged_suc_grasp_6_6_and_6_8.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_suc_file_name, only_success=True)
+    # merged_failure_file_name = 'merged_failure_grasp_6_6_and_6_8.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_failure_file_name, only_failure=True)
 
+    # data_folders = ['multi_finger_sim_data_6_16', 'multi_finger_sim_data_6_18']
+    # merged_suc_file_name = 'merged_suc_grasp_6_16_and_6_18.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_suc_file_name, only_success=True)
+    # merged_failure_file_name = 'merged_failure_grasp_6_16_and_6_18.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_failure_file_name, only_failure=True)
 
+    # merged_suc_file_name = 'merged_suc_grasp_10_sets.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_suc_file_name, only_success=True)
+    # merged_failure_file_name = 'merged_failure_grasp_10_sets.h5'
+    # merge_grasp_datasets(datasets_path, data_folders, 
+    #                         merged_failure_file_name, only_failure=True)
 
+    # merged_file_name = 'merged_grasp_data_10_sets.h5'
+    merged_file_name = 'merged_grasp_data_6_16_and_6_18.h5'
+    count_grasps(datasets_path, merged_file_name)

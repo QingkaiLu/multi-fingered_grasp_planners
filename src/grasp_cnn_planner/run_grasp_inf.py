@@ -13,9 +13,6 @@ import numpy as np
 from gen_rgbd_images import GenRgbdImage
 
 import roslib.packages as rp
-import sys
-sys.path.append(rp.get_pkg_dir('grasp_pipeline') 
-        + '/src')
 from compute_finger_tip_location import ComputeFingerTipPose
 from grasp_rgbd_patches_net import GraspRgbdPatchesNet
 from grasp_rgbd_config_net import GraspRgbdConfigNet

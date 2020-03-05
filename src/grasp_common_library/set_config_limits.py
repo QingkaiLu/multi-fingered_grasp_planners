@@ -5,10 +5,13 @@ class SetConfigLimits:
     def __init__(self):
         self.palm_loc_dof_dim = 3
         self.palm_dof_dim = 6
+        self.arm_joints_dof = 7
         self.finger_joints_dof_dim = 8
         self.config_dim = self.palm_dof_dim + self.finger_joints_dof_dim 
+        self.ik_config_dim = self.arm_joints_dof + self.finger_joints_dof_dim 
         self.setup_config_limits()
         self.setup_isrr_config_limits()
+        self.setup_ik_config_limits()
 
 
     def setup_joint_angle_limits(self):
@@ -150,5 +153,55 @@ class SetConfigLimits:
                 thumb_joint_0_middle + thumb_1st_joint_upper_limit * thumb_joint_0_range
         self.isrr_config_upper_limit[self.palm_dof_dim + 7] = \
                 thumb_joint_1_middle + thumb_2nd_joint_upper_limit * thumb_joint_1_range
+
+
+    def setup_arm_config_limits(self, config_lower_limit, 
+                                config_upper_limit):
+        even_joint_val = 2.879
+        odd_joint_val = 2.007
+        joint_limits = np.array([even_joint_val, odd_joint_val, even_joint_val,
+                                odd_joint_val, even_joint_val, odd_joint_val, 
+                                even_joint_val])
+
+        config_lower_limit[:self.arm_joints_dof] = -joint_limits
+        config_upper_limit[:self.arm_joints_dof] = joint_limits
+
+
+    def setup_ik_config_limits(self):
+        '''
+        Set up the limits for grasp ik configurations.
+        '''
+        self.ik_config_lower_limit = np.zeros(self.ik_config_dim)
+        self.ik_config_upper_limit = np.zeros(self.ik_config_dim)
+
+        self.setup_arm_config_limits(self.ik_config_lower_limit, 
+                                    self.ik_config_upper_limit)
+
+        self.setup_joint_angle_limits()
+        self.ik_config_lower_limit[self.arm_joints_dof] = self.index_joint_0_lower
+        self.ik_config_lower_limit[self.arm_joints_dof + 1] = self.index_joint_1_lower
+        self.ik_config_lower_limit[self.arm_joints_dof + 2] = self.middle_joint_0_lower
+        self.ik_config_lower_limit[self.arm_joints_dof + 3] = self.middle_joint_1_lower
+        self.ik_config_lower_limit[self.arm_joints_dof + 4] = self.ring_joint_0_lower
+        self.ik_config_lower_limit[self.arm_joints_dof + 5] = self.ring_joint_1_lower
+        self.ik_config_lower_limit[self.arm_joints_dof + 6] = self.thumb_joint_0_lower
+        self.ik_config_lower_limit[self.arm_joints_dof + 7] = self.thumb_joint_1_lower
+
+        self.ik_config_upper_limit[self.arm_joints_dof] = self.index_joint_0_upper
+        self.ik_config_upper_limit[self.arm_joints_dof + 1] = self.index_joint_1_upper
+        self.ik_config_upper_limit[self.arm_joints_dof + 2] = self.middle_joint_0_upper
+        self.ik_config_upper_limit[self.arm_joints_dof + 3] = self.middle_joint_1_upper
+        self.ik_config_upper_limit[self.arm_joints_dof + 4] = self.ring_joint_0_upper
+        self.ik_config_upper_limit[self.arm_joints_dof + 5] = self.ring_joint_1_upper
+        self.ik_config_upper_limit[self.arm_joints_dof + 6] = self.thumb_joint_0_upper
+        self.ik_config_upper_limit[self.arm_joints_dof + 7] = self.thumb_joint_1_upper
+
+
+    def inside_ik_config_limits(self, ik_config):
+        for i, c in enumerate(ik_config):
+            if c < self.ik_config_lower_limit[i] or c > self.ik_config_upper_limit[i]:
+                return False
+
+        return True
 
 

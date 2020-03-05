@@ -1,0 +1,3 @@
+int32 batch_id
+---
+bool success

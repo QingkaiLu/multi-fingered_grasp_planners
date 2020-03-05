@@ -15,9 +15,6 @@ import numpy as np
 from gen_rgbd_real_kinect2 import GenRgbdRealKinect2
 from gen_rgbd_gazebo_kinect import GenRgbdGazeboKinect
 import roslib.packages as rp
-import sys
-sys.path.append(rp.get_pkg_dir('grasp_pipeline') 
-        + '/src')
 from compute_finger_tip_location import ComputeFingerTipPose
 #from grasp_rgbd_net import GraspRgbdNet
 #from grasp_rgbd_inf import GraspRgbdInf

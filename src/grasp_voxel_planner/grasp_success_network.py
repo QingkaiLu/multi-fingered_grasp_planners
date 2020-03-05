@@ -38,7 +38,8 @@ class GraspSuccessNetwork():
         # Fully connected wrapper, with relu activation
         x = tf.matmul(x, W)
         #x = tf.add(tf.matmul(x, W), b)
-        x = tf.layers.batch_normalization(x, training=self.is_train)
+        # x = tf.layers.batch_normalization(x, training=self.is_train)
+        x = tf.contrib.layers.layer_norm(x)
         #return tf.nn.elu(x)
         x = tf.nn.relu(x)
         if self.dropout:

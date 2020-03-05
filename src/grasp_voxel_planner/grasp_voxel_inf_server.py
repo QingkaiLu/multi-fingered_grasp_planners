@@ -98,7 +98,7 @@ class GraspVoxelInfServer:
 
         self.grasp_voxel_inf.preshape_config = full_comp_mean_config
         # self.grasp_voxel_inf.preshape_config = full_config_inf
-        self.grasp_voxel_inf.pub_preshape_config()
+        # self.grasp_voxel_inf.pub_preshape_config()
 
         self.data_proc_lib.update_palm_pose_client(full_config_inf.palm_pose)
 

@@ -29,16 +29,19 @@ if __name__ == '__main__':
     #     'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
     # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
     #                 'merged_grasp_data_10_sets.h5'
+    # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+    #                 'merged_suc_grasp_10_sets.h5'
     train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
-                    'merged_suc_grasp_10_sets.h5'
+                    'merged_failure_grasp_5_sets.h5'
 
     grasp_loader = GraspDataLoader(train_data_path)
+    # prior_model_path = pkg_path + '/models/grasp_al_prior/gmm_2_sets'
     # prior_model_path = pkg_path + '/models/grasp_al_prior/prior_2_sets'
     # prior_model_path = pkg_path + '/models/grasp_al_prior/gmm_10_sets'
-    # grasp_configs = grasp_loader.load_grasp_configs()
-    # fit_gmm_prior(grasp_configs, prior_model_path)
+    #prior_model_path = pkg_path + '/models/grasp_al_prior/suc_gmm_10_sets'
+    
+    prior_model_path = pkg_path + '/models/grasp_al_prior/failure_gmm_5_sets'
 
-    prior_model_path = pkg_path + '/models/grasp_al_prior/suc_gmm_10_sets'
     grasp_configs = grasp_loader.load_grasp_configs()
     fit_gmm_prior(grasp_configs, prior_model_path)
 

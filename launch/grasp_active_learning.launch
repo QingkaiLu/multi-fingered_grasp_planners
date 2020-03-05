@@ -3,9 +3,10 @@
 <launch>
     <arg name="visualize_preshape" value="false"/>
     <!--arg name="vh_parent_tf" value="world"/-->
-    <!--arg name="vh_parent_tf" value="grasp_object"/-->
     <arg name="vh_parent_tf" value="object_pose"/>
     <arg name="kinect2_real" value="false" />
+    <arg name="planning" value="false" />
+    <arg name="al_model_path" value="/mnt/data_qingkai/multi_finger_exp_data/active_models/" />
 
     <include file="$(find ll4ma_robots_description)/launch/load_virtual_allegro.launch"
                                                         if="$(arg visualize_preshape)">
@@ -25,11 +26,21 @@
     <node name="broadcast_tf_node" pkg="prob_grasp_planner" 
                     type="broadcast_tf.py" output="screen"/> 
 
-    <node name="grasp_voxel_inf_server_node" pkg="prob_grasp_planner" 
-        type="grasp_voxel_inf_server.py" output="screen">
+    <node name="grasp_al_server_node" pkg="prob_grasp_planner" 
+        type="grasp_al_server.py" output="screen" unless="$(arg planning)">
         <param name="vis_preshape" value="$(arg visualize_preshape)" 
                         type="bool"/>
         <param name="virtual_hand_parent_tf" value="$(arg vh_parent_tf)"
+                        type="string"/>
+    </node>
+
+    <node name="active_plan_server_node" pkg="prob_grasp_planner" 
+        type="active_planner_server.py" output="screen" if="$(arg planning)">
+        <param name="vis_preshape" value="$(arg visualize_preshape)" 
+                        type="bool"/>
+        <param name="virtual_hand_parent_tf" value="$(arg vh_parent_tf)"
+                        type="string"/>
+        <param name="active_models_path" value="$(arg al_model_path)"
                         type="string"/>
     </node>
 

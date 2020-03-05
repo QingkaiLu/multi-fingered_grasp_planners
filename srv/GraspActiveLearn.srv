@@ -1,0 +1,24 @@
+string planner_name
+---
+float32[] inf_ik_config_array
+float32[] inf_config_array
+prob_grasp_planner/HandConfig full_inf_config
+float32[] init_ik_config_array
+float32[] init_config_array
+prob_grasp_planner/HandConfig full_init_config
+float32 inf_val
+float32 inf_suc_prob
+float32 inf_log_prior
+float32 inf_uct
+float32 reward
+string action
+float32 init_val
+float32 init_suc_prob
+float32 init_log_prior
+float32 init_uct
+int32[] sparse_voxel_grid
+float32 voxel_size
+int32[] voxel_grid_dim
+float32[] object_size
+bool success
+

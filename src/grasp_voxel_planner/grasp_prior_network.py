@@ -14,28 +14,30 @@ class GraspPriorNetwork():
     '''
 
     def __init__(self, update_voxel_enc=True, 
-                    dropout=False, voxel_ae=None):
+                dropout=False, voxel_ae=None,
+                scope_name='prior_net'):
 
         self.momentum = 0.9
         self.config_dim = 14
         self.classes_num = 1
         self.obj_size_dim = 3
 
-        self.is_train = tf.placeholder(tf.bool, name='holder_is_train')
-        self.learning_rate = tf.placeholder(tf.float32, name='holder_learn_rate')
+        self.is_train = tf.placeholder(tf.bool, name='mdn_holder_is_train')
+        self.learning_rate = tf.placeholder(tf.float32, name='mdn_holder_learn_rate')
         self.holder_config = tf.placeholder(tf.float32, [None, self.config_dim],
-                                            name='holder_config')
+                                            name='mdn_holder_config')
         self.holder_obj_size = tf.placeholder(tf.float32, [None, self.obj_size_dim],
-                                            name='holder_obj_size')
+                                            name='mdn_holder_obj_size')
         # Prior only for successful grasps?
         # self.holder_labels = tf.placeholder(tf.float32, [None, self.classes_num], 
         #                                     name = 'holder_labels')
         self.dropout = dropout
         if self.dropout:
-            self.keep_prob = tf.placeholder(tf.float32, name='holder_keep_prob')
+            self.keep_prob = tf.placeholder(tf.float32, name='mdn_holder_keep_prob')
 
         self.prior_net_res = {}
         self.update_voxel_enc = update_voxel_enc
+        self.scope_name = scope_name
 
         self.num_components = 2
 
@@ -50,15 +52,17 @@ class GraspPriorNetwork():
         else:
             self.voxel_ae = voxel_ae
 
-        with tf.variable_scope('prior_net_struct'):
+        with tf.variable_scope(self.scope_name + '_struct'):
             voxel_obj_size_concat = tf.concat(axis=1, values=
                                         [self.voxel_ae.ae_struct_res['embedding'], 
                                         self.holder_obj_size])
             prior_fc_1 = tf.layers.dense(voxel_obj_size_concat, 128) 
-            prior_fc_1 = tf.layers.batch_normalization(prior_fc_1, training=self.is_train)
+            # prior_fc_1 = tf.layers.batch_normalization(prior_fc_1, training=False)
+            prior_fc_1 = tf.contrib.layers.layer_norm(prior_fc_1)
             prior_fc_1 = tf.nn.relu(prior_fc_1)
             prior_fc_2 = tf.layers.dense(prior_fc_1, 32) 
-            prior_fc_2 = tf.layers.batch_normalization(prior_fc_2, training=self.is_train)
+            # prior_fc_2 = tf.layers.batch_normalization(prior_fc_2, training=False)
+            prior_fc_2 = tf.contrib.layers.layer_norm(prior_fc_2)
             prior_fc_2 = tf.nn.relu(prior_fc_2)
             locs = tf.layers.dense(prior_fc_2, self.num_components * self.config_dim, 
                                     activation=None)
@@ -87,7 +91,7 @@ class GraspPriorNetwork():
 
 
     def prior_network_loss(self, mixture, train_mode=True): 
-        with tf.variable_scope('prior_net_loss'):
+        with tf.variable_scope(self.scope_name + '_loss'):
                 loss = tf.reduce_mean(-mixture.log_prob(self.holder_config))
 
         if train_mode:
@@ -101,7 +105,8 @@ class GraspPriorNetwork():
                     opt_loss = optimizer.minimize(loss)
                 else:
                     opt_loss = optimizer.minimize(loss, var_list=
-                                 tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'prior_net'))
+                                 tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 
+                                                    self.scope_name))
 
         loss_sum = tf.summary.scalar('loss', loss)
         learn_rate_sum = tf.summary.scalar('learning_rate', self.learning_rate)
@@ -112,7 +117,7 @@ class GraspPriorNetwork():
             self.prior_net_res['opt_loss'] = opt_loss
 
 
-    def prior_net_train_test(self, train_mode):
-        self.build_prior_network()
+    def prior_net_train_test(self, train_mode, voxel_ae=None):
+        self.build_prior_network(voxel_ae)
         self.prior_network_loss(self.prior_net_res['mixture'], train_mode=train_mode)
 

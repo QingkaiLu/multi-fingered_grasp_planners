@@ -21,7 +21,7 @@ def train_grasp_net(train_data_path, logs_path, grasp_model_path,
     saver = tf.train.Saver()
     tf.get_default_graph().finalize()
 
-    batch_size = 64
+    batch_size = 128 #64
     logs_path_train = logs_path + '/grasp_net_train'
     # logs_path_train = logs_path + '/grasp_net_train_focal'
     # op to write logs to Tensorboard
@@ -210,19 +210,18 @@ if __name__ == '__main__':
         #                 'multi_finger_sim_data_6_14/proc_grasp_data.h5'
         # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
         #                 'merged_grasp_data_6_6_and_6_8.h5'
-        # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
-        #     'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
         train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
-            'merged_grasp_data_10_sets.h5'
-        logs_path = '/home/qingkai/tf_logs/grasp_net_logs/'
+            'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
+        # train_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+        #     'merged_grasp_data_10_sets.h5'
+        logs_path = '/home/qingkai/tf_logs/grasp_net_logs_5_sets/'
         update_voxel_enc = False #True
         if update_voxel_enc:
             grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_update_enc.ckpt'
         else:
             # grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_freeze_enc.ckpt'
-            grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_freeze_enc_10_sets.ckpt'
-            # grasp_model_path = pkg_path + '/models/grasp_al_net/'+ \
-            #                             'grasp_net_freeze_enc_5_sets_dropout_90.ckpt'
+            # grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_freeze_enc_10_sets.ckpt'
+            grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_5_sets.ckpt'
 
         voxel_ae_model_path = pkg_path + '/models/voxel_ae/'
 
@@ -231,18 +230,24 @@ if __name__ == '__main__':
     else:
         test_data_path = '/mnt/tars_data/gazebo_al_grasps/test/' + \
                         'merged_grasp_data_6_16_and_6_18.h5'
+
         # test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
         #     'merged_grasp_data_10_sets.h5'
+
+        #test_data_path = '/mnt/tars_data/gazebo_al_grasps/train/' + \
+        #    'merged_grasp_data_6_6_and_6_8_and_6_10_and_6_11_and_6_13.h5'
+
+
         update_voxel_enc = False #True
         if update_voxel_enc:
             grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_update_enc.ckpt'
         else:
-            grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_freeze_enc_10_sets.ckpt'
+            # grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_freeze_enc_10_sets.ckpt'
             # grasp_model_path = pkg_path + '/models/grasp_al_net/'+ \
             #                             'grasp_net_freeze_enc_2_sets_dropout_90.ckpt'
             # grasp_model_path = pkg_path + '/models/grasp_al_net/' + \
             #                'grasp_net_freeze_enc_2_sets.ckpt'
-
+            grasp_model_path = pkg_path + '/models/grasp_al_net/grasp_net_5_sets.ckpt'
 
         test_grasp_net(test_data_path, grasp_model_path, 
                         update_voxel_enc, dropout)

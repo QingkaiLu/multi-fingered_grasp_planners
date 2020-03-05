@@ -139,7 +139,7 @@ def test_config_net(test_data_path, grasp_model_path):
             iter_num += 1
             print 'iter num:', iter_num
 
-    binary_threshold = 0.4 #0.5
+    binary_threshold = 0.5 #0.4
 
     print pred_suc_probs[:-10]
     print true_suc_labels[:-10]
@@ -199,7 +199,7 @@ def test_config_net(test_data_path, grasp_model_path):
 
 
 if __name__ == '__main__':
-    is_train = True
+    is_train = False #True
     if is_train:
         train_data_path = '/mnt/tars_data/gazebo_al_grasps/train_isrr/' + \
              'merged_grasp_rgbd_10_sets.h5'
@@ -216,8 +216,8 @@ if __name__ == '__main__':
     else:
         test_data_path = '/mnt/tars_data/gazebo_al_grasps/test_isrr/' + \
                         'merged_grasp_rgbd_test_sets.h5'       
-        # grasp_model_path = pkg_path + '/models/grasp_al_net/rgbd_config_net.ckpt'
-        grasp_model_path = pkg_path + '/models/grasp_al_net/rgbd_config_net_os.ckpt'
+        grasp_model_path = pkg_path + '/models/grasp_al_net/rgbd_config_net.ckpt'
+        # grasp_model_path = pkg_path + '/models/grasp_al_net/rgbd_config_net_os.ckpt'
 
         test_config_net(test_data_path, grasp_model_path) 
 

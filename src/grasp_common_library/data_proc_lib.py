@@ -42,6 +42,7 @@ class DataProcLib:
         self.palm_dof_dim = 6
 
         self.object_frame_id = 'object_pose'
+        self.world_frame_id = 'world'
 
         self.tf_br = tf.TransformBroadcaster()
         self.listener = tf.TransformListener()
@@ -88,6 +89,49 @@ class DataProcLib:
                     pose_object.pose.position.z, pose_euler[0], pose_euler[1], pose_euler[2]]
             return pose_object_array
         return pose_object
+
+
+    def trans_pose_to_world_tf(self, pose_stamp, return_array=True):
+        '''
+        Transform a pose into world frame.
+
+        Args:
+            palm_pose_stamp
+        Returns:
+            palm pose array in world frame.
+        '''
+        self.listener.waitForTransform(pose_stamp.header.frame_id, self.world_frame_id, 
+                                        rospy.Time(), rospy.Duration(4.0))
+        try:
+            self.listener.waitForTransform(pose_stamp.header.frame_id, 
+                            self.world_frame_id, rospy.Time.now(), rospy.Duration(4.0))
+            pose_world = self.listener.transformPose(self.world_frame_id, pose_stamp)
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            rospy.logerr('Could not find transformation!')
+            return None
+
+        vis_tf = False
+        if vis_tf:
+            j = 0
+            rate = rospy.Rate(100)
+            # while not rospy.is_shutdown():
+            while j < 10:
+                self.tf_br.sendTransform((pose_world.pose.position.x, pose_world.pose.position.y, 
+                        pose_world.pose.position.z),
+                        (pose_world.pose.orientation.x, pose_world.pose.orientation.y, 
+                        pose_world.pose.orientation.z, pose_world.pose.orientation.w),
+                        rospy.Time.now(), 'palm_pose_world', pose_world.header.frame_id)
+                j += 1
+                rate.sleep()
+        
+        if return_array:
+            pose_quaternion = (pose_world.pose.orientation.x, pose_world.pose.orientation.y, 
+                    pose_world.pose.orientation.z, pose_world.pose.orientation.w) 
+            pose_euler = tf.transformations.euler_from_quaternion(pose_quaternion)
+            pose_world_array = [pose_world.pose.position.x, pose_world.pose.position.y,
+                    pose_world.pose.position.z, pose_euler[0], pose_euler[1], pose_euler[2]]
+            return pose_world_array
+        return pose_world
 
 
     def update_palm_pose_client(self, palm_pose):
@@ -187,4 +231,29 @@ class DataProcLib:
         except rospy.ServiceException, e:
             rospy.loginfo('Service gen_voxel_from_pcd call failed: %s'%e)
         rospy.loginfo('Service gen_voxel_from_pcd is executed.')
+
+
+    def lookup_transform(self, target_frame, source_frame):
+        trans = None
+        rot = None
+        while rot is None: 
+            try:
+                # trans, rot = self.listener.lookupTransform(
+                #                                 target_frame, source_frame, rospy.Time.now())
+
+                common_time = self.listener.getLatestCommonTime(target_frame, source_frame)
+                trans, rot = self.listener.lookupTransform(
+                                                target_frame, source_frame, common_time)
+            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+                rospy.logerr('Could not find transformation from source to target frame!')
+            
+        rot_mat = tf.transformations.quaternion_matrix(rot)
+        translation_mat = tf.transformations.translation_matrix(trans)
+        transform_mat = np.copy(translation_mat)
+        transform_mat[:3, :3] = rot_mat[:3, :3]
+
+        return transform_mat
+
+
+
 
