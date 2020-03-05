@@ -62,7 +62,7 @@ We list the bibtex citations of this repo.
     [4] @article{lu2020active,
 	title={{Multi-Fingered Active Grasp Learning}},
 	author={Lu, Qingkai and Van der Merwe, Mark and Hermans, Tucker},
-	journal={IROS (Under Review)},
+	booktitle={IROS (Under Review)},
 	year={2020}
     }
 
