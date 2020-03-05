@@ -25,9 +25,9 @@ Command to launch the voxel-based grasp planner of citation [3]:
 
 ```roslaunch prob_grasp_planner grasp_voxel_inference.launch```
 
-Command to launch the active grasp planner of citation [4]: 
+Command to launch the active grasp learner/planner of citation [4]: 
 
-```roslaunch prob_grasp_planner grasp_voxel_inference.launch```
+```roslaunch prob_grasp_planner grasp_active_learning.launch```
 
 ## Grasp Planner Project Pages
 [Planning Multi-Fingered Grasps as Probabilistic Inference in a Learned Deep Network](https://robot-learning.cs.utah.edu/project/grasp_inference)
