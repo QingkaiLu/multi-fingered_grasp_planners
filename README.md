@@ -25,6 +25,10 @@ Command to launch the voxel-based grasp planner of citation [3]:
 
 ```roslaunch prob_grasp_planner grasp_voxel_inference.launch```
 
+Command to launch the active grasp planner of citation [4]: 
+
+```roslaunch prob_grasp_planner grasp_voxel_inference.launch```
+
 ## Grasp Planner Project Pages
 [Planning Multi-Fingered Grasps as Probabilistic Inference in a Learned Deep Network](https://robot-learning.cs.utah.edu/project/grasp_inference)
 
@@ -50,9 +54,15 @@ We list the bibtex citations of this repo.
     
     [3] @article{lu2019multifinger,
 	title={{Multi-Fingered Grasp Planning via Inference in Deep Neural Networks}},
-	author={Lu, Qingkai, and Van der Merwe, Mark,  and Sundaralingam, Balakumar and Hermans, Tucker},
+	author={Lu, Qingkai and Van der Merwe, Mark, and Sundaralingam, Balakumar and Hermans, Tucker},
 	journal={{IEEE} Robotics \& Automation Magazine},
 	year={2019}
     }
 
+    [4] @article{lu2020active,
+	title={{Multi-Fingered Active Grasp Learning}},
+	author={Lu, Qingkai and Van der Merwe, Mark and Hermans, Tucker},
+	journal={IROS (Under Review)},
+	year={2020}
+    }
 
